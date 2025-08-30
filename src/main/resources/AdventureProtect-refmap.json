@@ -1,0 +1,34 @@
+{
+  "mappings": {
+    "com/joel4848/adventureprotect/mixin/DoorBlockMixin": {
+      "onUse": "Lnet/minecraft/class_2323;method_55766(Lnet/minecraft/class_2680;Lnet/minecraft/class_1937;Lnet/minecraft/class_2338;Lnet/minecraft/class_1657;Lnet/minecraft/class_3965;)Lnet/minecraft/class_1269;"
+    },
+    "com/joel4848/adventureprotect/mixin/FenceGateBlockMixin": {
+      "onUse": "Lnet/minecraft/class_2349;method_55766(Lnet/minecraft/class_2680;Lnet/minecraft/class_1937;Lnet/minecraft/class_2338;Lnet/minecraft/class_1657;Lnet/minecraft/class_3965;)Lnet/minecraft/class_1269;"
+    },
+    "com/joel4848/adventureprotect/mixin/FlowerPotBlockMixin": {
+      "onUse": "Lnet/minecraft/class_2362;method_55766(Lnet/minecraft/class_2680;Lnet/minecraft/class_1937;Lnet/minecraft/class_2338;Lnet/minecraft/class_1657;Lnet/minecraft/class_3965;)Lnet/minecraft/class_1269;",
+      "onUseWithItem": "Lnet/minecraft/class_2362;method_55765(Lnet/minecraft/class_1799;Lnet/minecraft/class_2680;Lnet/minecraft/class_1937;Lnet/minecraft/class_2338;Lnet/minecraft/class_1657;Lnet/minecraft/class_1268;Lnet/minecraft/class_3965;)Lnet/minecraft/class_9062;"
+    },
+    "com/joel4848/adventureprotect/mixin/TrapdoorBlockMixin": {
+      "onUse": "Lnet/minecraft/class_2533;method_55766(Lnet/minecraft/class_2680;Lnet/minecraft/class_1937;Lnet/minecraft/class_2338;Lnet/minecraft/class_1657;Lnet/minecraft/class_3965;)Lnet/minecraft/class_1269;"
+    }
+  },
+  "data": {
+    "named:intermediary": {
+      "com/joel4848/adventureprotect/mixin/DoorBlockMixin": {
+        "onUse": "Lnet/minecraft/class_2323;method_55766(Lnet/minecraft/class_2680;Lnet/minecraft/class_1937;Lnet/minecraft/class_2338;Lnet/minecraft/class_1657;Lnet/minecraft/class_3965;)Lnet/minecraft/class_1269;"
+      },
+      "com/joel4848/adventureprotect/mixin/FenceGateBlockMixin": {
+        "onUse": "Lnet/minecraft/class_2349;method_55766(Lnet/minecraft/class_2680;Lnet/minecraft/class_1937;Lnet/minecraft/class_2338;Lnet/minecraft/class_1657;Lnet/minecraft/class_3965;)Lnet/minecraft/class_1269;"
+      },
+      "com/joel4848/adventureprotect/mixin/FlowerPotBlockMixin": {
+        "onUse": "Lnet/minecraft/class_2362;method_55766(Lnet/minecraft/class_2680;Lnet/minecraft/class_1937;Lnet/minecraft/class_2338;Lnet/minecraft/class_1657;Lnet/minecraft/class_3965;)Lnet/minecraft/class_1269;",
+        "onUseWithItem": "Lnet/minecraft/class_2362;method_55765(Lnet/minecraft/class_1799;Lnet/minecraft/class_2680;Lnet/minecraft/class_1937;Lnet/minecraft/class_2338;Lnet/minecraft/class_1657;Lnet/minecraft/class_1268;Lnet/minecraft/class_3965;)Lnet/minecraft/class_9062;"
+      },
+      "com/joel4848/adventureprotect/mixin/TrapdoorBlockMixin": {
+        "onUse": "Lnet/minecraft/class_2533;method_55766(Lnet/minecraft/class_2680;Lnet/minecraft/class_1937;Lnet/minecraft/class_2338;Lnet/minecraft/class_1657;Lnet/minecraft/class_3965;)Lnet/minecraft/class_1269;"
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "adventureprotect",
+  "version": "1.0",
+  "name": "AdventureProtect",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.joel4848.adventureprotect.Adventureprotect"
+    ]
+  },
+  "mixins": [
+    "adventureprotect.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "fabric": "*",
+    "minecraft": ">=1.21"
+  }
+}
