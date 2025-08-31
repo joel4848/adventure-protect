@@ -13,9 +13,6 @@ public class AdventureProtectConfig {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("adventureprotect.json");
-    private static final String CONFIG_HEADER = """
-            // AdventureProtect Configuration
-            """;
 
     public boolean DisableTrapdoorInteraction = true;
     public boolean DisableFlowerpotInteraction = true;
@@ -25,13 +22,23 @@ public class AdventureProtectConfig {
     public boolean DisableEaselInteraction = true;
     public boolean DisablePlacedCanvasInteraction = true;
     public boolean DisablePlacedPhotographInteraction = true;
+    public boolean DisablePaintingInteraction = true;
+    public boolean DisableBrewingStandInteraction = true;
+    public boolean DisableNoteBlockInteraction = true;
+    public boolean DisableJukeboxInteraction = true;
+    public boolean DisableDecoratedPotInteraction = true;
+    public boolean DisableArmourStandRemoveItems = true;
+    public boolean DisableArmourStandPlaceItems = true;
+    public boolean DisableArmourStandReplaceItems = true;
+    public boolean DisableShulkerBoxInteraction = true;
+    public boolean DisableXercaMusicInteraction = true;
 
     public static void load() {
         if (Files.exists(CONFIG_PATH)) {
             try {
                 String json = Files.readString(CONFIG_PATH);
                 AdventureProtectConfig loaded = GSON.fromJson(json, AdventureProtectConfig.class);
-                copyValues(loaded, INSTANCE);
+                copyValues(loaded);
             } catch (IOException e) {
                 System.err.println("Failed to load AdventureProtect config: " + e.getMessage());
                 // Use defaults and save
@@ -53,16 +60,26 @@ public class AdventureProtectConfig {
         }
     }
 
-    private static void copyValues(AdventureProtectConfig from, AdventureProtectConfig to) {
+    private static void copyValues(AdventureProtectConfig from) {
         if (from != null) {
-            to.DisableTrapdoorInteraction = from.DisableTrapdoorInteraction;
-            to.DisableFlowerpotInteraction = from.DisableFlowerpotInteraction;
-            to.DisableChestInteraction = from.DisableChestInteraction;
-            to.DisableBarrelInteraction = from.DisableBarrelInteraction;
-            to.DisableItemFrameInteraction = from.DisableItemFrameInteraction;
-            to.DisableEaselInteraction = from.DisableEaselInteraction;
-            to.DisablePlacedCanvasInteraction = from.DisablePlacedCanvasInteraction;
-            to.DisablePlacedPhotographInteraction = from.DisablePlacedPhotographInteraction;
+            INSTANCE.DisableTrapdoorInteraction = from.DisableTrapdoorInteraction;
+            INSTANCE.DisableFlowerpotInteraction = from.DisableFlowerpotInteraction;
+            INSTANCE.DisableChestInteraction = from.DisableChestInteraction;
+            INSTANCE.DisableBarrelInteraction = from.DisableBarrelInteraction;
+            INSTANCE.DisableItemFrameInteraction = from.DisableItemFrameInteraction;
+            INSTANCE.DisableEaselInteraction = from.DisableEaselInteraction;
+            INSTANCE.DisablePlacedCanvasInteraction = from.DisablePlacedCanvasInteraction;
+            INSTANCE.DisablePlacedPhotographInteraction = from.DisablePlacedPhotographInteraction;
+            INSTANCE.DisablePaintingInteraction = from.DisablePaintingInteraction;
+            INSTANCE.DisableBrewingStandInteraction = from.DisableBrewingStandInteraction;
+            INSTANCE.DisableNoteBlockInteraction = from.DisableNoteBlockInteraction;
+            INSTANCE.DisableJukeboxInteraction = from.DisableJukeboxInteraction;
+            INSTANCE.DisableDecoratedPotInteraction = from.DisableDecoratedPotInteraction;
+            INSTANCE.DisableArmourStandRemoveItems = from.DisableArmourStandRemoveItems;
+            INSTANCE.DisableArmourStandPlaceItems = from.DisableArmourStandPlaceItems;
+            INSTANCE.DisableArmourStandReplaceItems = from.DisableArmourStandReplaceItems;
+            INSTANCE.DisableShulkerBoxInteraction = from.DisableShulkerBoxInteraction;
+            INSTANCE.DisableXercaMusicInteraction = from.DisableXercaMusicInteraction;
         }
     }
 }

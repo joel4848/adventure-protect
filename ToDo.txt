@@ -4,11 +4,37 @@ Brewing stands
 Placed musical instruments
 Note blocks
 Jukeboxes
-Armour stands
+Armour stands (preventing remove, place and replace, under separate config variants)
+paintings (break)
+shulker boxes (including the coloured variants - under one config option)
 
 
-
-
-Add exceptions for:
+Add exceptions via the exceptionator for:
 
 Barrels
+Shulkers (including the coloured variants)
+Armour stands
+
+WORKS - Punching paintings that are placed on walls
+WORKS - Interacting with brewing stands
+WORKS - Interacting with note blocks
+WORKS - Interacting with jukeboxes
+WORKS - Interacting with decorated pots
+WORKS - Removing items from armour stands
+WORKS - Placing items onto armour stands
+WORKS - Replacing items on armour stands
+WORKS - Opening shulker boxes (including all coloured variants)
+WORKS - Interacting with the following things added by the mod 'xercamusic' when they're placed as blocks in the world:
+    Music Box (xercamusic:music_box); Metronome (xercamusic:metronome)
+
+DOESN'T WORK: can still interact with drum kit and piano (brings up GUI still)
+
+
+WORKS - Barrels (rename to "Adventure Barrel"
+WORKS - Shulker boxes (as with the config, they and the coloured variants can be lumped together i.e. all just be renamed to "Adventure Shulker Box")
+WORKS - Armour stands (rename to "Adventure Armour Stand" - allowing players in adventure mode to remove, place AND replace items i.e. no separate exceptions for those 3 actions, despite there being 3 separate configs)
+WORKS - Brewing stands ("Adventure Brewing Stands")
+
+DOESN'T WORK - Note blocks ("Adventure Note Block")
+DOESN'T WORK - Jukeboxes ("Adventure Jukebox")
+DOESN'T WORK - interacting with item frames/glow item frames ("Adventure Item Frame") - this sets and immediately removes the exception

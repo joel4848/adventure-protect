@@ -2,7 +2,6 @@ package com.joel4848.adventureprotect;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
 import net.minecraft.item.ItemStack;
@@ -14,7 +13,7 @@ import net.minecraft.text.Text;
 
 public class ExceptionatorCommand {
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, net.minecraft.command.CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
         dispatcher.register(CommandManager.literal("adventureprotect")
                 .then(CommandManager.literal("exceptionator")
                         .requires(source -> source.hasPermissionLevel(2)) // Requires OP level 2

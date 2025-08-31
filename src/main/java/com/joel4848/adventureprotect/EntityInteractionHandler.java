@@ -1,13 +1,16 @@
 package com.joel4848.adventureprotect;
 
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.decoration.ItemFrameEntity;
 import net.minecraft.entity.decoration.GlowItemFrameEntity;
+import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
 
 public class EntityInteractionHandler {
 
@@ -24,7 +27,29 @@ public class EntityInteractionHandler {
 
             // Check for item frames and glow item frames
             if (entity instanceof ItemFrameEntity || entity instanceof GlowItemFrameEntity) {
+                // Check for exception name
+                Text customName = entity.getCustomName();
+                if (customName != null && customName.getString().equals("Adventure Item Frame")) {
+                    return ActionResult.PASS; // Allow rotation only
+                }
+
                 if (AdventureProtectConfig.INSTANCE.DisableItemFrameInteraction) {
+                    return ActionResult.FAIL;
+                }
+            }
+
+            // Check for armor stands
+            if (entity instanceof ArmorStandEntity) {
+                // Check for exception name
+                Text customName = entity.getCustomName();
+                if (customName != null && customName.getString().equals("Adventure Armour Stand")) {
+                    return ActionResult.PASS; // Allow all interactions
+                }
+
+                // Check individual config options for armor stands
+                if (AdventureProtectConfig.INSTANCE.DisableArmourStandPlaceItems ||
+                        AdventureProtectConfig.INSTANCE.DisableArmourStandReplaceItems ||
+                        AdventureProtectConfig.INSTANCE.DisableArmourStandRemoveItems) {
                     return ActionResult.FAIL;
                 }
             }
