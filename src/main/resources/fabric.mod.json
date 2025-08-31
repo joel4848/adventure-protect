@@ -15,9 +15,6 @@
   "entrypoints": {
     "main": [
       "com.joel4848.adventureprotect.Adventureprotect"
-    ],
-    "modmenu": [
-      "com.joel4848.adventureprotect.AdventureProtectModMenuIntegration"
     ]
   },
   "depends": {

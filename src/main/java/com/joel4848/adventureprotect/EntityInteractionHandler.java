@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.decoration.ItemFrameEntity;
 import net.minecraft.entity.decoration.GlowItemFrameEntity;
-import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
