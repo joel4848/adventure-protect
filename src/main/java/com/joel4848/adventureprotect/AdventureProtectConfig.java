@@ -38,7 +38,7 @@ public class AdventureProtectConfig {
             try {
                 String json = Files.readString(CONFIG_PATH);
                 AdventureProtectConfig loaded = GSON.fromJson(json, AdventureProtectConfig.class);
-                copyValues(loaded, INSTANCE);
+                copyValues(loaded);
             } catch (IOException e) {
                 System.err.println("Failed to load AdventureProtect config: " + e.getMessage());
                 // Use defaults and save
@@ -60,26 +60,26 @@ public class AdventureProtectConfig {
         }
     }
 
-    private static void copyValues(AdventureProtectConfig from, AdventureProtectConfig to) {
+    private static void copyValues(AdventureProtectConfig from) {
         if (from != null) {
-            to.DisableTrapdoorInteraction = from.DisableTrapdoorInteraction;
-            to.DisableFlowerpotInteraction = from.DisableFlowerpotInteraction;
-            to.DisableChestInteraction = from.DisableChestInteraction;
-            to.DisableBarrelInteraction = from.DisableBarrelInteraction;
-            to.DisableItemFrameInteraction = from.DisableItemFrameInteraction;
-            to.DisableEaselInteraction = from.DisableEaselInteraction;
-            to.DisablePlacedCanvasInteraction = from.DisablePlacedCanvasInteraction;
-            to.DisablePlacedPhotographInteraction = from.DisablePlacedPhotographInteraction;
-            to.DisablePaintingInteraction = from.DisablePaintingInteraction;
-            to.DisableBrewingStandInteraction = from.DisableBrewingStandInteraction;
-            to.DisableNoteBlockInteraction = from.DisableNoteBlockInteraction;
-            to.DisableJukeboxInteraction = from.DisableJukeboxInteraction;
-            to.DisableDecoratedPotInteraction = from.DisableDecoratedPotInteraction;
-            to.DisableArmourStandRemoveItems = from.DisableArmourStandRemoveItems;
-            to.DisableArmourStandPlaceItems = from.DisableArmourStandPlaceItems;
-            to.DisableArmourStandReplaceItems = from.DisableArmourStandReplaceItems;
-            to.DisableShulkerBoxInteraction = from.DisableShulkerBoxInteraction;
-            to.DisableXercaMusicInteraction = from.DisableXercaMusicInteraction;
+            INSTANCE.DisableTrapdoorInteraction = from.DisableTrapdoorInteraction;
+            INSTANCE.DisableFlowerpotInteraction = from.DisableFlowerpotInteraction;
+            INSTANCE.DisableChestInteraction = from.DisableChestInteraction;
+            INSTANCE.DisableBarrelInteraction = from.DisableBarrelInteraction;
+            INSTANCE.DisableItemFrameInteraction = from.DisableItemFrameInteraction;
+            INSTANCE.DisableEaselInteraction = from.DisableEaselInteraction;
+            INSTANCE.DisablePlacedCanvasInteraction = from.DisablePlacedCanvasInteraction;
+            INSTANCE.DisablePlacedPhotographInteraction = from.DisablePlacedPhotographInteraction;
+            INSTANCE.DisablePaintingInteraction = from.DisablePaintingInteraction;
+            INSTANCE.DisableBrewingStandInteraction = from.DisableBrewingStandInteraction;
+            INSTANCE.DisableNoteBlockInteraction = from.DisableNoteBlockInteraction;
+            INSTANCE.DisableJukeboxInteraction = from.DisableJukeboxInteraction;
+            INSTANCE.DisableDecoratedPotInteraction = from.DisableDecoratedPotInteraction;
+            INSTANCE.DisableArmourStandRemoveItems = from.DisableArmourStandRemoveItems;
+            INSTANCE.DisableArmourStandPlaceItems = from.DisableArmourStandPlaceItems;
+            INSTANCE.DisableArmourStandReplaceItems = from.DisableArmourStandReplaceItems;
+            INSTANCE.DisableShulkerBoxInteraction = from.DisableShulkerBoxInteraction;
+            INSTANCE.DisableXercaMusicInteraction = from.DisableXercaMusicInteraction;
         }
     }
 }

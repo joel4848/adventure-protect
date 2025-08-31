@@ -26,7 +26,7 @@ public class AdventureProtectConfigScreen extends Screen {
 
         // Title
         adder.add(ButtonWidget.builder(Text.literal("AdventureProtect Configuration").formatted(Formatting.BOLD), button -> {})
-                .width(200).height(20).build(), 2);
+                .width(200).size(200, 20).build(), 2);
 
         // Block interactions
         adder.add(createToggleButton("Disable Trapdoor Interaction", config.DisableTrapdoorInteraction,
@@ -79,13 +79,17 @@ public class AdventureProtectConfigScreen extends Screen {
         // Done and Cancel buttons
         adder.add(ButtonWidget.builder(ScreenTexts.DONE, button -> {
             AdventureProtectConfig.save();
-            this.client.setScreen(this.parent);
-        }).width(100).height(20).build());
+            if (this.client != null) {
+                this.client.setScreen(this.parent);
+            }
+        }).size(100, 20).build());
 
         adder.add(ButtonWidget.builder(ScreenTexts.CANCEL, button -> {
             AdventureProtectConfig.load(); // Reload from file to discard changes
-            this.client.setScreen(this.parent);
-        }).width(100).height(20).build());
+            if (this.client != null) {
+                this.client.setScreen(this.parent);
+            }
+        }).size(100, 20).build());
 
         gridWidget.refreshPositions();
         SimplePositioningWidget.setPos(gridWidget, 0, 0, this.width, this.height, 0.5f, 0.25f);
@@ -103,7 +107,7 @@ public class AdventureProtectConfigScreen extends Screen {
             Text newButtonText = Text.literal(text + ": " + (newValue ? "ON" : "OFF"))
                     .formatted(newValue ? Formatting.GREEN : Formatting.RED);
             button.setMessage(newButtonText);
-        }).width(180).height(20).build();
+        }).size(180, 20).build();
     }
 
     @Override
