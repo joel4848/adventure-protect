@@ -1,0 +1,14 @@
+Add protection to:
+
+Brewing stands
+Placed musical instruments
+Note blocks
+Jukeboxes
+Armour stands
+
+
+
+
+Add exceptions for:
+
+Barrels

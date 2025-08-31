@@ -40,3 +40,12 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# Ignore run folder created by Fabric/IntelliJ
+run/
+
+*.log
+
+# Ignore to do file
+
+ToDo.txt

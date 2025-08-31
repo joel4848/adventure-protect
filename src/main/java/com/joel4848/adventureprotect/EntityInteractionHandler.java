@@ -1,6 +1,8 @@
 package com.joel4848.adventureprotect;
 
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.minecraft.entity.decoration.ItemFrameEntity;
+import net.minecraft.entity.decoration.GlowItemFrameEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -20,41 +22,34 @@ public class EntityInteractionHandler {
                 return ActionResult.PASS;
             }
 
+            // Check for item frames and glow item frames
+            if (entity instanceof ItemFrameEntity || entity instanceof GlowItemFrameEntity) {
+                if (AdventureProtectConfig.INSTANCE.DisableItemFrameInteraction) {
+                    return ActionResult.FAIL;
+                }
+            }
+
             // Get the entity type identifier
             Identifier entityId = Registries.ENTITY_TYPE.getId(entity.getType());
             String entityIdString = entityId.toString();
 
-            // Debug: Send entity ID to player
-/*            if (entityIdString.contains("xercapaint") || entityIdString.contains("camerapture")) {
-                player.sendMessage(Text.literal("§eDebug: Entity ID is: " + entityIdString), false);
-            }*/
-
             // Check for XercaPaint easel entity
             if (entityIdString.contains("xercapaint") && entityIdString.contains("easel")) {
-/*
-                player.sendMessage(Text.literal("§cXercaPaint Easel entity detected: " + entityIdString), false);
-*/
-                if (!world.getGameRules().getBoolean(Adventureprotect.XERCAPAINT_EASEL)) {
-                    return ActionResult.PASS; // Always allow interactions with easels
+                if (AdventureProtectConfig.INSTANCE.DisableEaselInteraction) {
+                    return ActionResult.PASS; // Always allow interactions with easels when protection is on
                 }
             }
 
             // Check for XercaPaint canvas entity
             if (entityIdString.contains("xercapaint") && entityIdString.contains("canvas")) {
-/*
-                player.sendMessage(Text.literal("§cXercaPaint Canvas entity detected: " + entityIdString), false);
-*/
-                if (!world.getGameRules().getBoolean(Adventureprotect.XERCAPAINT_CANVAS)) {
+                if (AdventureProtectConfig.INSTANCE.DisablePlacedCanvasInteraction) {
                     return ActionResult.FAIL;
                 }
             }
 
             // Check for CameraCapture picture frame entity
             if (entityIdString.contains("camerapture") && (entityIdString.contains("picture") || entityIdString.contains("frame"))) {
-/*
-                player.sendMessage(Text.literal("§cCameraCapture Picture Frame entity detected: " + entityIdString), false);
-*/
-                if (!world.getGameRules().getBoolean(Adventureprotect.CAMERAPTURE_PICTURE_FRAME)) {
+                if (AdventureProtectConfig.INSTANCE.DisablePlacedPhotographInteraction) {
                     return ActionResult.FAIL;
                 }
             }

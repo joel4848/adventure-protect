@@ -8,6 +8,7 @@ import net.minecraft.world.GameMode;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.BarrelBlock;
 import net.minecraft.block.FlowerPotBlock;
+import net.minecraft.block.TrapdoorBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.text.Text;
@@ -40,22 +41,29 @@ public class BlockInteractionHandler {
                     }
                 }
 
-                // If no exception name, check the game rule
-                if (!world.getGameRules().getBoolean(Adventureprotect.CHEST)) {
+                // If no exception name, check the config
+                if (AdventureProtectConfig.INSTANCE.DisableChestInteraction) {
                     return ActionResult.FAIL;
                 }
             }
 
             // Check if it's a barrel
             if (block instanceof BarrelBlock) {
-                if (!world.getGameRules().getBoolean(Adventureprotect.BARREL)) {
+                if (AdventureProtectConfig.INSTANCE.DisableBarrelInteraction) {
                     return ActionResult.FAIL;
                 }
             }
 
             // Check if it's a flower pot
             if (block instanceof FlowerPotBlock) {
-                if (!world.getGameRules().getBoolean(Adventureprotect.FLOWERPOT)) {
+                if (AdventureProtectConfig.INSTANCE.DisableFlowerpotInteraction) {
+                    return ActionResult.FAIL;
+                }
+            }
+
+            // Check if it's a trapdoor
+            if (block instanceof TrapdoorBlock) {
+                if (AdventureProtectConfig.INSTANCE.DisableTrapdoorInteraction) {
                     return ActionResult.FAIL;
                 }
             }
