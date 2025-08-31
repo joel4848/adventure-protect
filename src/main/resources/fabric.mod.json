@@ -1,21 +1,22 @@
 {
   "schemaVersion": 1,
   "id": "adventureprotect",
-  "version": "1.0",
+  "version": "2.0.0",
   "name": "AdventureProtect",
-  "description": "",
-  "authors": [],
-  "contact": {},
-  "license": "All-Rights-Reserved",
+  "description": "Configurably prevents players in adventure mode from interacting with certain things",
+  "authors": ["Joel4848"],
+  "contact": {
+    "homepage": "https://github.com/joel4848/adventure-protect",
+    "sources": "https://github.com/joel4848/adventure-protect",
+    "issues": "https://github.com/joel4848/adventure-protect/issues"
+  },
+  "license": "CC BY-NC-SA 4.0",
   "environment": "*",
   "entrypoints": {
     "main": [
       "com.joel4848.adventureprotect.Adventureprotect"
     ]
   },
-  "mixins": [
-    "adventureprotect.mixins.json"
-  ],
   "depends": {
     "fabricloader": ">=0.16.0",
     "fabric": "*",

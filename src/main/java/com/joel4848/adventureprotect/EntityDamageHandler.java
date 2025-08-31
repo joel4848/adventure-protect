@@ -1,6 +1,8 @@
 package com.joel4848.adventureprotect;
 
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.minecraft.entity.decoration.ItemFrameEntity;
+import net.minecraft.entity.decoration.GlowItemFrameEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
@@ -19,6 +21,13 @@ public class EntityDamageHandler {
 
             if (serverPlayer.interactionManager.getGameMode() != GameMode.ADVENTURE) {
                 return ActionResult.PASS;
+            }
+
+            // Check for item frames and glow item frames
+            if (entity instanceof ItemFrameEntity || entity instanceof GlowItemFrameEntity) {
+                if (AdventureProtectConfig.INSTANCE.DisableItemFrameInteraction) {
+                    return ActionResult.FAIL;
+                }
             }
 
             // Get the entity type identifier
@@ -41,8 +50,8 @@ public class EntityDamageHandler {
                 if (hasCanvas) {
                     return ActionResult.PASS; // Allow canvas removal
                 } else {
-                    // Empty easel - check gamerule to see if breaking is allowed
-                    if (!world.getGameRules().getBoolean(Adventureprotect.XERCAPAINT_EASEL)) {
+                    // Empty easel - check config to see if breaking is allowed
+                    if (AdventureProtectConfig.INSTANCE.DisableEaselInteraction) {
                         return ActionResult.FAIL; // Prevent breaking empty easel
                     }
                 }
@@ -50,14 +59,14 @@ public class EntityDamageHandler {
 
             // Check for XercaPaint canvas entity
             if (entityIdString.contains("xercapaint") && entityIdString.contains("canvas")) {
-                if (!world.getGameRules().getBoolean(Adventureprotect.XERCAPAINT_CANVAS)) {
+                if (AdventureProtectConfig.INSTANCE.DisablePlacedCanvasInteraction) {
                     return ActionResult.FAIL;
                 }
             }
 
             // Check for CameraCapture picture frame entity
             if (entityIdString.contains("camerapture") && (entityIdString.contains("picture") || entityIdString.contains("frame"))) {
-                if (!world.getGameRules().getBoolean(Adventureprotect.CAMERAPTURE_PICTURE_FRAME)) {
+                if (AdventureProtectConfig.INSTANCE.DisablePlacedPhotographInteraction) {
                     return ActionResult.FAIL;
                 }
             }
