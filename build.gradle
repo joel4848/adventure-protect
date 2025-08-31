@@ -9,7 +9,7 @@ java {
 }
 
 group = 'com.joel4848'
-version = '2.1.0-config'
+version = '2.2.0'
 
 def getGprUser() {
     return project.findProperty('gpr.user')
