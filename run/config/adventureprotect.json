@@ -1,0 +1,10 @@
+{
+  "DisableTrapdoorInteraction": true,
+  "DisableFlowerpotInteraction": true,
+  "DisableChestInteraction": true,
+  "DisableBarrelInteraction": true,
+  "DisableItemFrameInteraction": true,
+  "DisableEaselInteraction": true,
+  "DisablePlacedCanvasInteraction": true,
+  "DisablePlacedPhotographInteraction": true
+}
