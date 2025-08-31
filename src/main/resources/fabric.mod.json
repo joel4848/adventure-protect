@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "adventureprotect",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "name": "AdventureProtect",
   "description": "Configurably prevents players in adventure mode from interacting with certain things",
   "authors": ["Joel4848"],
@@ -15,11 +15,17 @@
   "entrypoints": {
     "main": [
       "com.joel4848.adventureprotect.Adventureprotect"
+    ],
+    "modmenu": [
+      "com.joel4848.adventureprotect.AdventureProtectModMenuIntegration"
     ]
   },
   "depends": {
     "fabricloader": ">=0.16.0",
     "fabric": "*",
     "minecraft": ">=1.21"
+  },
+  "suggests": {
+    "modmenu": "*"
   }
 }

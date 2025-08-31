@@ -4,11 +4,33 @@ Brewing stands
 Placed musical instruments
 Note blocks
 Jukeboxes
-Armour stands
+Armour stands (preventing remove, place and replace, under separate config variants)
+paintings (break)
+shulker boxes (including the coloured variants - under one config option)
 
 
-
-
-Add exceptions for:
+Add exceptions via the exceptionator for:
 
 Barrels
+Shulkers (including the coloured variants)
+Armour stands
+
+Yes please! Please do all of the following:
+
+1. Add functionality to prevent players in adventure mode from:
+
+- Punching paintings that are placed on walls (as a player in adventure mode can punch paintings, which destroys them and drops them as an item)
+- Interacting with brewing stands
+- Interacting with note blocks
+- Interacting with jukeboxes
+- Interacting with decorated pots (because they can right-click a decorated pot and it'll place the item they're holding into the pot, and then they can't get it out!)
+- Removing items from armour stands
+- Placing items onto armour stands
+- Replacing items on armour stands
+- Opening shulker boxes (including all coloured variants)
+- Interacting with the following things added by the mod 'xercamusic' when they're placed as blocks in the world:
+    Drum Kit (xercamusic:drum_kit); Piano (xercamusic:piano); Music Box (xercamusic:music_box); Metronome (xercamusic:metronome)
+
+2. Add config options for all of these; there should be separate config options for armour stands for removing/placing/replacing items, but shulker boxes/colour variants can all go under one config option
+
+3. Add more exceptions - you'll note that the mod has an item called the exceptionator; if you shift-right-click on a chest holding the exceptionator it renames it to 'Adventure Chest' and says "Added adventure protection exception to chest" - if the chest was already called Adventure Chest then it clears the custom name and says "Removed adventure protection exception from chest"

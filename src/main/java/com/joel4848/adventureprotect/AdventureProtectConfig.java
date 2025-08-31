@@ -13,9 +13,6 @@ public class AdventureProtectConfig {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("adventureprotect.json");
-    private static final String CONFIG_HEADER = """
-            // AdventureProtect Configuration
-            """;
 
     public boolean DisableTrapdoorInteraction = true;
     public boolean DisableFlowerpotInteraction = true;
@@ -25,6 +22,16 @@ public class AdventureProtectConfig {
     public boolean DisableEaselInteraction = true;
     public boolean DisablePlacedCanvasInteraction = true;
     public boolean DisablePlacedPhotographInteraction = true;
+    public boolean DisablePaintingInteraction = true;
+    public boolean DisableBrewingStandInteraction = true;
+    public boolean DisableNoteBlockInteraction = true;
+    public boolean DisableJukeboxInteraction = true;
+    public boolean DisableDecoratedPotInteraction = true;
+    public boolean DisableArmourStandRemoveItems = true;
+    public boolean DisableArmourStandPlaceItems = true;
+    public boolean DisableArmourStandReplaceItems = true;
+    public boolean DisableShulkerBoxInteraction = true;
+    public boolean DisableXercaMusicInteraction = true;
 
     public static void load() {
         if (Files.exists(CONFIG_PATH)) {
@@ -63,6 +70,16 @@ public class AdventureProtectConfig {
             to.DisableEaselInteraction = from.DisableEaselInteraction;
             to.DisablePlacedCanvasInteraction = from.DisablePlacedCanvasInteraction;
             to.DisablePlacedPhotographInteraction = from.DisablePlacedPhotographInteraction;
+            to.DisablePaintingInteraction = from.DisablePaintingInteraction;
+            to.DisableBrewingStandInteraction = from.DisableBrewingStandInteraction;
+            to.DisableNoteBlockInteraction = from.DisableNoteBlockInteraction;
+            to.DisableJukeboxInteraction = from.DisableJukeboxInteraction;
+            to.DisableDecoratedPotInteraction = from.DisableDecoratedPotInteraction;
+            to.DisableArmourStandRemoveItems = from.DisableArmourStandRemoveItems;
+            to.DisableArmourStandPlaceItems = from.DisableArmourStandPlaceItems;
+            to.DisableArmourStandReplaceItems = from.DisableArmourStandReplaceItems;
+            to.DisableShulkerBoxInteraction = from.DisableShulkerBoxInteraction;
+            to.DisableXercaMusicInteraction = from.DisableXercaMusicInteraction;
         }
     }
 }

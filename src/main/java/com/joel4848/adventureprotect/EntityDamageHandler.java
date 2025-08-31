@@ -1,14 +1,17 @@
 package com.joel4848.adventureprotect;
 
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.decoration.ItemFrameEntity;
 import net.minecraft.entity.decoration.GlowItemFrameEntity;
+import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameMode;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
 
 public class EntityDamageHandler {
 
@@ -23,9 +26,31 @@ public class EntityDamageHandler {
                 return ActionResult.PASS;
             }
 
-            // Check for item frames and glow item frames
+            // Check for paintings
+            if (entity instanceof PaintingEntity) {
+                if (AdventureProtectConfig.INSTANCE.DisablePaintingInteraction) {
+                    return ActionResult.FAIL;
+                }
+            }
+
+            // Check for item frames and glow item frames - NO exceptions for punching (breaking)
             if (entity instanceof ItemFrameEntity || entity instanceof GlowItemFrameEntity) {
                 if (AdventureProtectConfig.INSTANCE.DisableItemFrameInteraction) {
+                    return ActionResult.FAIL;
+                }
+            }
+
+            // Check for armor stands
+            if (entity instanceof ArmorStandEntity) {
+                // Check for exception name
+                Text customName = entity.getCustomName();
+                if (customName != null && customName.getString().equals("Adventure Armour Stand")) {
+                    return ActionResult.PASS; // Allow breaking excepted armor stands
+                }
+
+                // No individual config check needed for breaking armor stands
+                // They can be broken if any armor stand protection is disabled
+                if (AdventureProtectConfig.INSTANCE.DisableArmourStandRemoveItems) {
                     return ActionResult.FAIL;
                 }
             }
