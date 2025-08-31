@@ -11,10 +11,28 @@ java {
 group = 'com.joel4848'
 version = '2.1.0'
 
+def getGprUser() {
+    return project.findProperty('gpr.user')
+}
+
+def getGprKey() {
+    return project.findProperty('gpr.key')
+}
+
 repositories {
     mavenCentral()
     maven { url = 'https://maven.fabricmc.net/' }
     maven { url = 'https://maven.terraformersmc.com/' }
+    if(getGprUser() && getGprKey()) {
+        maven {
+            name = "MrCrayfish (GitHub)"
+            url = "https://maven.pkg.github.com/MrCrayfish/Maven"
+            credentials {
+                username = getGprUser()
+                password = getGprKey()
+            }
+        }
+    }
 }
 
 dependencies {
@@ -25,6 +43,7 @@ dependencies {
 
     // Mod Menu integration
     modImplementation "com.terraformersmc:modmenu:11.0.2"
+    modImplementation "com.mrcrayfish:framework-fabric:1.21.1-0.9.6"
 }
 
 loom {
