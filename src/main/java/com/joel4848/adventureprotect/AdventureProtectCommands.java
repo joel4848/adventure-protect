@@ -3,6 +3,7 @@ package com.joel4848.adventureprotect;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
 import net.minecraft.item.ItemStack;
@@ -11,101 +12,98 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import static com.joel4848.adventureprotect.Adventureprotect.LOGGER;
 
 public class AdventureProtectCommands {
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, net.minecraft.command.CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
-        LOGGER.info("Registering AdventureProtect commands...");
-        // Register the main adventureprotect command
+    /**
+     * Register method used by Fabric's CommandRegistrationCallback.
+     * Matches (dispatcher, registryAccess, environment).
+     */
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher,
+                                CommandRegistryAccess registryAccess,
+                                CommandManager.RegistrationEnvironment environment) {
+
+        LOGGER.info("[AdventureProtect] Registering commands; environment = {}", environment);
+
+        // Main root: /adventureprotect
         var mainCommand = CommandManager.literal("adventureprotect")
-                .requires(source -> source.hasPermissionLevel(2)); // Requires OP level 2
+                .requires(source -> source.hasPermissionLevel(2)); // OP level 2 required
 
-        // Add exceptionator subcommand
-        mainCommand.then(CommandManager.literal("exceptionator")
-                .executes(AdventureProtectCommands::giveExceptionator));
+        // /adventureprotect exceptionator
+        mainCommand.then(
+                CommandManager.literal("exceptionator")
+                        .executes(ctx -> {
+                            LOGGER.info("[AdventureProtect] Executing exceptionator command by {}",
+                                    safeGetPlayerName(ctx));
+                            return giveExceptionator(ctx);
+                        })
+        );
 
-        // Add protect subcommand with all protection types
+        // Build /adventureprotect protect <type> <true|false>
         var protectCommand = CommandManager.literal("protect");
 
-        // Add all protection subcommands
-        protectCommand.then(CommandManager.literal("trapdoors")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "trapdoors"))));
+        // Map: literal used in command -> internal protection key used by updateConfigProtection
+        // Keep insertion order for predictable tab completion ordering.
+        Map<String, String> protectMap = new LinkedHashMap<>();
+        protectMap.put("trapdoors", "trapdoors");
+        protectMap.put("flowerpots", "flowerpots");
+        protectMap.put("chests", "chests");
+        protectMap.put("barrels", "barrels");
+        protectMap.put("itemFrames", "itemFrames");
+        protectMap.put("jopEasels", "jopEasels");
+        protectMap.put("jopCanvases", "jopCanvases");
+        protectMap.put("camerapturePhotographs", "camerapturePhotographs");
+        protectMap.put("paintings", "paintings");
+        protectMap.put("brewingStands", "brewingStands");
+        protectMap.put("noteBlocks", "noteBlocks");
+        protectMap.put("jukeBoxes", "jukeBoxes");
+        protectMap.put("decoratedPots", "decoratedPots");
+        protectMap.put("armourStandsRemove", "armourStandsRemove");
+        protectMap.put("armourStandsPlace", "armourStandsPlace");
+        protectMap.put("armourStandsReplace", "armourStandsReplace");
+        protectMap.put("shulkerBoxes", "shulkerBoxes");
+        // fixed typo: musicModBlocks (no underscore)
+        protectMap.put("musicModBlocks", "musicModBlocks");
 
-        protectCommand.then(CommandManager.literal("flowerpots")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "flowerpots"))));
+        // Build each protection literal under /adventureprotect protect <literal> <enabled>
+        for (Map.Entry<String, String> entry : protectMap.entrySet()) {
+            final String literal = entry.getKey();
+            final String protectionKey = entry.getValue();
 
-        protectCommand.then(CommandManager.literal("chests")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "chests"))));
+            var literalNode = CommandManager.literal(literal)
+                    .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                            .executes(ctx -> {
+                                LOGGER.info("[AdventureProtect] Command /adventureprotect protect {} executed by {} with enabled={}",
+                                        protectionKey, safeGetPlayerName(ctx), BoolArgumentType.getBool(ctx, "enabled"));
+                                return setProtection(ctx, protectionKey);
+                            })
+                    );
 
-        protectCommand.then(CommandManager.literal("barrels")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "barrels"))));
+            protectCommand.then(literalNode);
+            LOGGER.debug("[AdventureProtect] Added protect subcommand: {}", literal);
+        }
 
-        protectCommand.then(CommandManager.literal("item_frames")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "item_frames"))));
-
-        protectCommand.then(CommandManager.literal("jop_easels")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "jop_easels"))));
-
-        protectCommand.then(CommandManager.literal("jop_canvases")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "jop_canvases"))));
-
-        protectCommand.then(CommandManager.literal("camerapture_photographs")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "camerapture_photographs"))));
-
-        protectCommand.then(CommandManager.literal("paintings")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "paintings"))));
-
-        protectCommand.then(CommandManager.literal("brewing_stands")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "brewing_stands"))));
-
-        protectCommand.then(CommandManager.literal("note_blocks")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "note_blocks"))));
-
-        protectCommand.then(CommandManager.literal("juke_boxes")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "juke_boxes"))));
-
-        protectCommand.then(CommandManager.literal("decorated_pots")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "decorated_pots"))));
-
-        protectCommand.then(CommandManager.literal("armour_stands_remove")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "armour_stands_remove"))));
-
-        protectCommand.then(CommandManager.literal("armour_stands_place")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "armour_stands_place"))));
-
-        protectCommand.then(CommandManager.literal("armour_stands_replace")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "armour_stands_replace"))));
-
-        protectCommand.then(CommandManager.literal("shulker_boxes")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "shulker_boxes"))));
-
-        protectCommand.then(CommandManager.literal("music_mod_blocks")
-                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                        .executes(ctx -> setProtection(ctx, "music_mod_blocks"))));
-
-        // Add the protect command to main command
+        // attach protect branch to main command
         mainCommand.then(protectCommand);
 
-        // Register the complete command tree
+        // Finally register the root command into dispatcher
         dispatcher.register(mainCommand);
+        LOGGER.info("[AdventureProtect] Registered /adventureprotect root (including protect subtree).");
+    }
+
+    // Helper to safely get the player's name for logging (does not throw if command run from console)
+    private static String safeGetPlayerName(CommandContext<ServerCommandSource> ctx) {
+        try {
+            // Use getString() on Text to get the plain player name string
+            return ctx.getSource().getPlayerOrThrow().getName().getString();
+        } catch (Exception e) {
+            return "CONSOLE";
+        }
     }
 
     private static int giveExceptionator(CommandContext<ServerCommandSource> context) {
@@ -159,19 +157,25 @@ public class AdventureProtectCommands {
                 String enabledText = enabled ? "§aenabled" : "§cdisabled";
                 String friendlyName = getFriendlyProtectionName(protectionType);
 
+                // Mirror your original behaviour: feedback to command source and log
                 source.sendFeedback(() -> Text.literal("§7Protection for §f" + friendlyName + " §7has been " + enabledText), true);
+                LOGGER.info("[AdventureProtect] {} protection set to {} by {}",
+                        protectionType, enabled, safeGetPlayerName(context));
                 return 1;
             } else {
                 source.sendError(Text.literal("Unknown protection type: " + protectionType));
+                LOGGER.warn("[AdventureProtect] Attempted to set unknown protection type: {} by {}", protectionType, safeGetPlayerName(context));
                 return 0;
             }
 
         } catch (Exception e) {
             source.sendError(Text.literal("Error updating protection: " + e.getMessage()));
+            LOGGER.error("[AdventureProtect] Error updating protection {}: {}", protectionType, e.getMessage(), e);
             return 0;
         }
     }
 
+    // Map the camelCase protectionType keys to your config fields (fields unchanged)
     private static boolean updateConfigProtection(String protectionType, boolean enabled) {
         switch (protectionType) {
             case "trapdoors":
@@ -186,46 +190,46 @@ public class AdventureProtectCommands {
             case "barrels":
                 AdventureProtectConfig.INSTANCE.DisableBarrelInteraction = enabled;
                 return true;
-            case "item_frames":
+            case "itemFrames":
                 AdventureProtectConfig.INSTANCE.DisableItemFrameInteraction = enabled;
                 return true;
-            case "jop_easels":
+            case "jopEasels":
                 AdventureProtectConfig.INSTANCE.DisableEaselInteraction = enabled;
                 return true;
-            case "jop_canvases":
+            case "jopCanvases":
                 AdventureProtectConfig.INSTANCE.DisablePlacedCanvasInteraction = enabled;
                 return true;
-            case "camerapture_photographs":
+            case "camerapturePhotographs":
                 AdventureProtectConfig.INSTANCE.DisablePlacedPhotographInteraction = enabled;
                 return true;
             case "paintings":
                 AdventureProtectConfig.INSTANCE.DisablePaintingInteraction = enabled;
                 return true;
-            case "brewing_stands":
+            case "brewingStands":
                 AdventureProtectConfig.INSTANCE.DisableBrewingStandInteraction = enabled;
                 return true;
-            case "note_blocks":
+            case "noteBlocks":
                 AdventureProtectConfig.INSTANCE.DisableNoteBlockInteraction = enabled;
                 return true;
-            case "juke_boxes":
+            case "jukeBoxes":
                 AdventureProtectConfig.INSTANCE.DisableJukeboxInteraction = enabled;
                 return true;
-            case "decorated_pots":
+            case "decoratedPots":
                 AdventureProtectConfig.INSTANCE.DisableDecoratedPotInteraction = enabled;
                 return true;
-            case "armour_stands_remove":
+            case "armourStandsRemove":
                 AdventureProtectConfig.INSTANCE.DisableArmourStandRemoveItems = enabled;
                 return true;
-            case "armour_stands_place":
+            case "armourStandsPlace":
                 AdventureProtectConfig.INSTANCE.DisableArmourStandPlaceItems = enabled;
                 return true;
-            case "armour_stands_replace":
+            case "armourStandsReplace":
                 AdventureProtectConfig.INSTANCE.DisableArmourStandReplaceItems = enabled;
                 return true;
-            case "shulker_boxes":
+            case "shulkerBoxes":
                 AdventureProtectConfig.INSTANCE.DisableShulkerBoxInteraction = enabled;
                 return true;
-            case "music_mod_blocks":
+            case "musicModBlocks":
                 AdventureProtectConfig.INSTANCE.DisableXercaMusicInteraction = enabled;
                 return true;
             default:
@@ -239,20 +243,20 @@ public class AdventureProtectCommands {
             case "flowerpots": return "Flower Pots";
             case "chests": return "Chests";
             case "barrels": return "Barrels";
-            case "item_frames": return "Item Frames";
-            case "jop_easels": return "JOP Easels";
-            case "jop_canvases": return "JOP Canvases";
-            case "camerapture_photographs": return "Camerapture Photographs";
+            case "itemFrames": return "Item Frames";
+            case "jopEasels": return "JOP Easels";
+            case "jopCanvases": return "JOP Canvases";
+            case "camerapturePhotographs": return "Camerapture Photographs";
             case "paintings": return "Paintings";
-            case "brewing_stands": return "Brewing Stands";
-            case "note_blocks": return "Note Blocks";
-            case "juke_boxes": return "Juke Boxes";
-            case "decorated_pots": return "Decorated Pots";
-            case "armour_stands_remove": return "Armour Stands (Remove Items)";
-            case "armour_stands_place": return "Armour Stands (Place Items)";
-            case "armour_stands_replace": return "Armour Stands (Replace Items)";
-            case "shulker_boxes": return "Shulker Boxes";
-            case "music_mod_blocks": return "Music Mod Blocks";
+            case "brewingStands": return "Brewing Stands";
+            case "noteBlocks": return "Note Blocks";
+            case "jukeBoxes": return "Juke Boxes";
+            case "decoratedPots": return "Decorated Pots";
+            case "armourStandsRemove": return "Armour Stands (Remove Items)";
+            case "armourStandsPlace": return "Armour Stands (Place Items)";
+            case "armourStandsReplace": return "Armour Stands (Replace Items)";
+            case "shulkerBoxes": return "Shulker Boxes";
+            case "musicModBlocks": return "Music Mod Blocks";
             default: return protectionType;
         }
     }

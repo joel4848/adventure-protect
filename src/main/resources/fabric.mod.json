@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "adventureprotect",
-  "version": "2.2.0",
+  "version": "2.2.0-1",
   "name": "AdventureProtect",
   "description": "Configurably prevents players in adventure mode from interacting with certain things",
   "authors": ["Joel4848"],
