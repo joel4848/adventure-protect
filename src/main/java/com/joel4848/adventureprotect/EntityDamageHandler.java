@@ -55,7 +55,7 @@ public class EntityDamageHandler {
                 }
             }
 
-            // Handle XercaPaint and CameraCapture entities
+            // Handle XercaPaint and Camerapture entities
             ActionResult modEntityResult = handleModEntities(entity);
             if (modEntityResult != ActionResult.PASS) {
                 return modEntityResult;
@@ -100,7 +100,7 @@ public class EntityDamageHandler {
             }
         }
 
-        // Check for CameraCapture picture frame entity
+        // Check for Camerapture picture frame entity
         if (entityIdString.contains("camerapture") && (entityIdString.contains("picture") || entityIdString.contains("frame"))) {
             if (AdventureProtectConfig.INSTANCE.DisablePlacedPhotographInteraction) {
                 return ActionResult.FAIL;

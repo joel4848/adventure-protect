@@ -71,7 +71,7 @@ public class EntityInteractionHandler {
                 }
             }
 
-            // Check for CameraCapture picture frame entity
+            // Check for Camerapture picture frame entity
             if (entityIdString.contains("camerapture") && (entityIdString.contains("picture") || entityIdString.contains("frame"))) {
                 if (AdventureProtectConfig.INSTANCE.DisablePlacedPhotographInteraction) {
                     return ActionResult.FAIL;
