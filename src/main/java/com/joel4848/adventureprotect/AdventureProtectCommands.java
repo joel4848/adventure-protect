@@ -15,66 +15,95 @@ import net.minecraft.text.Text;
 public class AdventureProtectCommands {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, net.minecraft.command.CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
-        dispatcher.register(CommandManager.literal("adventureprotect")
-                .then(CommandManager.literal("exceptionator")
-                        .requires(source -> source.hasPermissionLevel(2)) // Requires OP level 2
-                        .executes(AdventureProtectCommands::giveExceptionator))
-                .then(CommandManager.literal("protect")
-                        .requires(source -> source.hasPermissionLevel(2)) // Requires OP level 2
-                        .then(CommandManager.literal("trapdoors")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "trapdoors", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("flowerpots")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "flowerpots", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("chests")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "chests", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("barrels")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "barrels", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("item_frames")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "item_frames", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("jop_easels")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "jop_easels", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("jop_canvases")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "jop_canvases", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("camerapture_photographs")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "camerapture_photographs", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("paintings")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "paintings", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("brewing_stands")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "brewing_stands", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("note_blocks")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "note_blocks", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("juke_boxes")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "juke_boxes", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("decorated_pots")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "decorated_pots", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("armour_stands_remove")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "armour_stands_remove", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("armour_stands_place")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "armour_stands_place", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("armour_stands_replace")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "armour_stands_replace", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("shulker_boxes")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "shulker_boxes", BoolArgumentType.getBool(ctx, "enabled")))))
-                        .then(CommandManager.literal("music_mod_blocks")
-                                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
-                                        .executes(ctx -> setProtection(ctx, "music_mod_blocks", BoolArgumentType.getBool(ctx, "enabled")))))));
+        // Register the main adventureprotect command
+        var mainCommand = CommandManager.literal("adventureprotect")
+                .requires(source -> source.hasPermissionLevel(2)); // Requires OP level 2
+
+        // Add exceptionator subcommand
+        mainCommand.then(CommandManager.literal("exceptionator")
+                .executes(AdventureProtectCommands::giveExceptionator));
+
+        // Add protect subcommand with all protection types
+        var protectCommand = CommandManager.literal("protect");
+
+        // Add all protection subcommands
+        protectCommand.then(CommandManager.literal("trapdoors")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "trapdoors"))));
+
+        protectCommand.then(CommandManager.literal("flowerpots")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "flowerpots"))));
+
+        protectCommand.then(CommandManager.literal("chests")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "chests"))));
+
+        protectCommand.then(CommandManager.literal("barrels")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "barrels"))));
+
+        protectCommand.then(CommandManager.literal("item_frames")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "item_frames"))));
+
+        protectCommand.then(CommandManager.literal("jop_easels")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "jop_easels"))));
+
+        protectCommand.then(CommandManager.literal("jop_canvases")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "jop_canvases"))));
+
+        protectCommand.then(CommandManager.literal("camerapture_photographs")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "camerapture_photographs"))));
+
+        protectCommand.then(CommandManager.literal("paintings")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "paintings"))));
+
+        protectCommand.then(CommandManager.literal("brewing_stands")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "brewing_stands"))));
+
+        protectCommand.then(CommandManager.literal("note_blocks")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "note_blocks"))));
+
+        protectCommand.then(CommandManager.literal("juke_boxes")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "juke_boxes"))));
+
+        protectCommand.then(CommandManager.literal("decorated_pots")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "decorated_pots"))));
+
+        protectCommand.then(CommandManager.literal("armour_stands_remove")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "armour_stands_remove"))));
+
+        protectCommand.then(CommandManager.literal("armour_stands_place")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "armour_stands_place"))));
+
+        protectCommand.then(CommandManager.literal("armour_stands_replace")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "armour_stands_replace"))));
+
+        protectCommand.then(CommandManager.literal("shulker_boxes")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "shulker_boxes"))));
+
+        protectCommand.then(CommandManager.literal("music_mod_blocks")
+                .then(CommandManager.argument("enabled", BoolArgumentType.bool())
+                        .executes(ctx -> setProtection(ctx, "music_mod_blocks"))));
+
+        // Add the protect command to main command
+        mainCommand.then(protectCommand);
+
+        // Register the complete command tree
+        dispatcher.register(mainCommand);
     }
 
     private static int giveExceptionator(CommandContext<ServerCommandSource> context) {
@@ -113,8 +142,9 @@ public class AdventureProtectCommands {
         }
     }
 
-    private static int setProtection(CommandContext<ServerCommandSource> context, String protectionType, boolean enabled) {
+    private static int setProtection(CommandContext<ServerCommandSource> context, String protectionType) {
         ServerCommandSource source = context.getSource();
+        boolean enabled = BoolArgumentType.getBool(context, "enabled");
 
         try {
             // Update the config based on protection type
