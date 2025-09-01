@@ -11,10 +11,12 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import static com.joel4848.adventureprotect.Adventureprotect.LOGGER;
 
 public class AdventureProtectCommands {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, net.minecraft.command.CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
+        LOGGER.info("Registering AdventureProtect commands...");
         // Register the main adventureprotect command
         var mainCommand = CommandManager.literal("adventureprotect")
                 .requires(source -> source.hasPermissionLevel(2)); // Requires OP level 2
