@@ -11,13 +11,13 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-public class ExceptionatorCommand {
+public class AdventureProtectCommands {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, net.minecraft.command.CommandRegistryAccess registryAccess, CommandManager.RegistrationEnvironment environment) {
         dispatcher.register(CommandManager.literal("adventureprotect")
                 .then(CommandManager.literal("exceptionator")
                         .requires(source -> source.hasPermissionLevel(2)) // Requires OP level 2
-                        .executes(ExceptionatorCommand::giveExceptionator)));
+                        .executes(AdventureProtectCommands::giveExceptionator)));
     }
 
     private static int giveExceptionator(CommandContext<ServerCommandSource> context) {

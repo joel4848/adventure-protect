@@ -15,7 +15,7 @@ public class Adventureprotect implements ModInitializer {
         StickInteractionHandler.register();
 
         // Register the Exceptionator command
-        CommandRegistrationCallback.EVENT.register(ExceptionatorCommand::register);
+        CommandRegistrationCallback.EVENT.register(AdventureProtectCommands::register);
 
         // Add shutdown hook to clean up file watcher
         Runtime.getRuntime().addShutdownHook(new Thread(AdventureProtectConfig::stopConfigWatcher));
