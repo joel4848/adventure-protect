@@ -67,22 +67,39 @@ public class AdventureProtectCommands {
         protectMap.put("armourStandsPlace", "armourStandsPlace");
         protectMap.put("armourStandsReplace", "armourStandsReplace");
         protectMap.put("shulkerBoxes", "shulkerBoxes");
-        // fixed typo: musicModBlocks (no underscore)
+        // corrected: musicModBlocks (no underscore)
         protectMap.put("musicModBlocks", "musicModBlocks");
 
-        // Build each protection literal under /adventureprotect protect <literal> <enabled>
+        // Build each protection literal under /adventureprotect protect <literal> [enabled]
         for (Map.Entry<String, String> entry : protectMap.entrySet()) {
             final String literal = entry.getKey();
             final String protectionKey = entry.getValue();
 
+            // Create node for literal
             var literalNode = CommandManager.literal(literal)
+                    // When user supplies the boolean argument: set the value
                     .then(CommandManager.argument("enabled", BoolArgumentType.bool())
                             .executes(ctx -> {
+                                boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
                                 LOGGER.info("[AdventureProtect] Command /adventureprotect protect {} executed by {} with enabled={}",
-                                        protectionKey, safeGetPlayerName(ctx), BoolArgumentType.getBool(ctx, "enabled"));
+                                        protectionKey, safeGetPlayerName(ctx), enabled);
                                 return setProtection(ctx, protectionKey);
                             })
-                    );
+                    )
+                    // When user omits the boolean: show the current value
+                    .executes(ctx -> {
+                        boolean current = getProtectionValue(protectionKey);
+                        String enabledText = current ? "§aenabled" : "§cdisabled";
+                        String friendly = getFriendlyProtectionName(protectionKey);
+
+                        // Send feedback only to command source (don't broadcast to ops)
+                        ctx.getSource().sendFeedback(() ->
+                                Text.literal("§7Protection for §f" + friendly + " §7is " + enabledText), false);
+
+                        LOGGER.info("[AdventureProtect] Queried protection {} -> {} by {}",
+                                protectionKey, current, safeGetPlayerName(ctx));
+                        return 1;
+                    });
 
             protectCommand.then(literalNode);
             LOGGER.debug("[AdventureProtect] Added protect subcommand: {}", literal);
@@ -234,6 +251,31 @@ public class AdventureProtectCommands {
                 return true;
             default:
                 return false;
+        }
+    }
+
+    // New helper: return current boolean value for a protectionType
+    private static boolean getProtectionValue(String protectionType) {
+        switch (protectionType) {
+            case "trapdoors": return AdventureProtectConfig.INSTANCE.DisableTrapdoorInteraction;
+            case "flowerpots": return AdventureProtectConfig.INSTANCE.DisableFlowerpotInteraction;
+            case "chests": return AdventureProtectConfig.INSTANCE.DisableChestInteraction;
+            case "barrels": return AdventureProtectConfig.INSTANCE.DisableBarrelInteraction;
+            case "itemFrames": return AdventureProtectConfig.INSTANCE.DisableItemFrameInteraction;
+            case "jopEasels": return AdventureProtectConfig.INSTANCE.DisableEaselInteraction;
+            case "jopCanvases": return AdventureProtectConfig.INSTANCE.DisablePlacedCanvasInteraction;
+            case "camerapturePhotographs": return AdventureProtectConfig.INSTANCE.DisablePlacedPhotographInteraction;
+            case "paintings": return AdventureProtectConfig.INSTANCE.DisablePaintingInteraction;
+            case "brewingStands": return AdventureProtectConfig.INSTANCE.DisableBrewingStandInteraction;
+            case "noteBlocks": return AdventureProtectConfig.INSTANCE.DisableNoteBlockInteraction;
+            case "jukeBoxes": return AdventureProtectConfig.INSTANCE.DisableJukeboxInteraction;
+            case "decoratedPots": return AdventureProtectConfig.INSTANCE.DisableDecoratedPotInteraction;
+            case "armourStandsRemove": return AdventureProtectConfig.INSTANCE.DisableArmourStandRemoveItems;
+            case "armourStandsPlace": return AdventureProtectConfig.INSTANCE.DisableArmourStandPlaceItems;
+            case "armourStandsReplace": return AdventureProtectConfig.INSTANCE.DisableArmourStandReplaceItems;
+            case "shulkerBoxes": return AdventureProtectConfig.INSTANCE.DisableShulkerBoxInteraction;
+            case "musicModBlocks": return AdventureProtectConfig.INSTANCE.DisableXercaMusicInteraction;
+            default: return false;
         }
     }
 
