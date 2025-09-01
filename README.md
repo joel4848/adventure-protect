@@ -3,7 +3,9 @@
 
 Prevents players in adventure mode from interacting with certain blocks/entities. Protection can be enabled/disabled for each type of block/entity in the config, or for specific blocks/entities in-game.
 
-I made this mod for my own needs on my own server, and I'm only making it public to make it easier for my players to get. It works for Fabric 1.21.1.
+The mod can be used 100% server-side only, but anyone who wants to use the exception tool (see 'Configurability' below) will need it on the client too.
+
+_I made this mod for my own needs on my own server, and I'm only making it public to make it easier for my players to get. It works for Fabric 1.21.1._
 ## Features
 
 **Protection**
