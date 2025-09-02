@@ -14,15 +14,19 @@ public class Adventureprotect implements ModInitializer {
         // Load config with file watching for live reloading
         AdventureProtectConfig.load();
 
+        // Register all interaction handlers
         BlockInteractionHandler.register();
         EntityInteractionHandler.register();
         EntityDamageHandler.register();
         StickInteractionHandler.register();
 
+        // Register block spoofing handler for XercaMusic client-side GUI prevention
+        BlockSpoofingHandler.register();
+
         // Register commands
         CommandRegistrationCallback.EVENT.register(AdventureProtectCommands::register);
 
-        LOGGER.info("AdventureProtect initialized and commands registered.");
+        LOGGER.info("AdventureProtect initialized with block spoofing handler and commands registered.");
 
         // Add shutdown hook to clean up file watcher
         Runtime.getRuntime().addShutdownHook(new Thread(AdventureProtectConfig::stopConfigWatcher));

@@ -130,12 +130,12 @@ public class BlockInteractionHandler {
                 }
             }
 
-            // Check for XercaMusic blocks
+            // Check for XercaMusic blocks that work with standard server-side blocking
+            // Note: Piano and drum_kit are handled by BlockSpoofingHandler due to client-side GUI issues
             Identifier blockId = Registries.BLOCK.getId(block);
             String blockIdString = blockId.toString();
             if (blockIdString.contains("xercamusic") &&
-                    (blockIdString.contains("drum_kit") || blockIdString.contains("piano") ||
-                            blockIdString.contains("music_box") || blockIdString.contains("metronome"))) {
+                    (blockIdString.contains("music_box") || blockIdString.contains("metronome"))) {
                 if (AdventureProtectConfig.INSTANCE.DisableXercaMusicInteraction) {
                     return ActionResult.FAIL;
                 }
