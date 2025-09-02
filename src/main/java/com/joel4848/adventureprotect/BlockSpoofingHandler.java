@@ -3,6 +3,7 @@ package com.joel4848.adventureprotect;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.Blocks;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -14,6 +15,11 @@ import net.minecraft.registry.Registries;
 import static com.joel4848.adventureprotect.Adventureprotect.LOGGER;
 
 public class BlockSpoofingHandler {
+
+    // Tunables: adjust as needed for your server
+    private static final int SECOND_CLOSE_TICK = 1; // send an extra close at tick 1
+    private static final int THIRD_CLOSE_TICK  = 3; // send an extra close at tick 3
+    private static final int RESTORE_TICKS     = 5; // restore block at tick 5
 
     public static void register() {
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
@@ -36,30 +42,36 @@ public class BlockSpoofingHandler {
             Identifier blockId = Registries.BLOCK.getId(block);
             String blockIdString = blockId.toString();
 
-            // Check if this is a XercaMusic block we want to spoof
             if (isXercaMusicInteractiveBlock(blockIdString)) {
-                LOGGER.info("[AdventureProtect] SPOOFING: Detected click on XercaMusic block: {} by player: {}",
+                LOGGER.info("[AdventureProtect] Detected click on XercaMusic block: {} by player: {}",
                         blockIdString, serverPlayer.getName().getString());
 
-                // Send feedback to player
+                // Inform player
                 serverPlayer.sendMessage(Text.literal("§cMusical instruments are disabled in adventure mode!"), true);
 
-                // Schedule the spoofing for a few ticks later to let any client-side processing happen first
+                // Run the spoof/close/restore sequence on the server thread
                 world.getServer().execute(() -> {
-                    // Send fake block update to make client think the block is now air
-                    var fakeAirState = Blocks.AIR.getDefaultState();
-                    var blockUpdatePacket = new BlockUpdateS2CPacket(pos, fakeAirState);
-                    serverPlayer.networkHandler.sendPacket(blockUpdatePacket);
+                    try {
+                        // Step 1: Immediately spoof to air
+                        serverPlayer.networkHandler.sendPacket(new BlockUpdateS2CPacket(pos, Blocks.AIR.getDefaultState()));
+                        LOGGER.info("[AdventureProtect] Sent fake AIR block update to {} at {}", serverPlayer.getName().getString(), pos);
 
-                    LOGGER.debug("[AdventureProtect] Sent fake AIR block update to client for position: {}", pos);
+                        // Step 2: Immediately send a CloseScreen packet (belt-and-suspenders)
+                        int syncId = serverPlayer.currentScreenHandler != null ? serverPlayer.currentScreenHandler.syncId : 0;
+                        serverPlayer.networkHandler.sendPacket(new CloseScreenS2CPacket(syncId));
+                        LOGGER.info("[AdventureProtect] Sent immediate CloseScreen (syncId={}) to {}", syncId, serverPlayer.getName().getString());
 
-                    // Schedule restoration of the real block after a very short delay
-                    scheduleBlockRestoration(serverPlayer, pos, blockState, world, 3); // 3 ticks = ~150ms
+                        // Step 3: Schedule staged follow-ups (second/third close + restore)
+                        scheduleStagedPackets(serverPlayer, pos, blockState, world,
+                                SECOND_CLOSE_TICK, THIRD_CLOSE_TICK, RESTORE_TICKS);
+
+                    } catch (Exception e) {
+                        LOGGER.error("[AdventureProtect] Error in spoof sequence for {} at {}: {}", serverPlayer.getName().getString(), pos, e.getMessage());
+                    }
                 });
 
-                // Don't prevent the interaction from the server perspective - let it happen
-                // but spoof the client into thinking the block disappeared
-                return ActionResult.PASS;
+                // Tell Fabric that the use was blocked server-side
+                return ActionResult.FAIL;
             }
 
             return ActionResult.PASS;
@@ -68,39 +80,67 @@ public class BlockSpoofingHandler {
         LOGGER.info("[AdventureProtect] Block spoofing handler registered");
     }
 
-    private static void scheduleBlockRestoration(ServerPlayerEntity player, BlockPos pos,
-                                                 net.minecraft.block.BlockState originalState,
-                                                 net.minecraft.world.World world, int delayTicks) {
+    /**
+     * Schedules staged follow-up packets on the server thread:
+     * - sends CloseScreen at tick secondCloseTick
+     * - sends CloseScreen at tick thirdCloseTick
+     * - restores block and sends final CloseScreen at tick restoreTicks
+     */
+    private static void scheduleStagedPackets(ServerPlayerEntity player,
+                                              BlockPos pos,
+                                              net.minecraft.block.BlockState originalState,
+                                              net.minecraft.world.World world,
+                                              int secondCloseTick,
+                                              int thirdCloseTick,
+                                              int restoreTicks) {
+        final int[] tick = {0};
 
-        // Create a simple counter-based delay system
-        final int[] tickCounter = {0};
-
-        // Create a recurring task that checks each tick
-        Runnable restorationTask = new Runnable() {
+        Runnable task = new Runnable() {
             @Override
             public void run() {
-                tickCounter[0]++;
-
-                if (tickCounter[0] >= delayTicks) {
-                    // Time to restore the block
-                    try {
-                        var realBlockUpdatePacket = new BlockUpdateS2CPacket(pos, originalState);
-                        if (player.networkHandler != null) {
-                            player.networkHandler.sendPacket(realBlockUpdatePacket);
-                            LOGGER.debug("[AdventureProtect] Restored real block state to client for position: {}", pos);
-                        }
-                    } catch (Exception e) {
-                        LOGGER.error("[AdventureProtect] Error during block restoration for position: {}: {}", pos, e.getMessage());
-                    }
-                } else {
-                    // Schedule this task again for next tick
-                    world.getServer().execute(this);
+                // stop if player disconnected / unreachable
+                if (player.networkHandler == null || player.getServer() == null) {
+                    LOGGER.info("[AdventureProtect] Player disconnected or not reachable during spoof restore: {}", player.getName().getString());
+                    return;
                 }
+
+                tick[0]++;
+
+                try {
+                    if (tick[0] == secondCloseTick) {
+                        int syncId = player.currentScreenHandler != null ? player.currentScreenHandler.syncId : 0;
+                        player.networkHandler.sendPacket(new CloseScreenS2CPacket(syncId));
+                        LOGGER.info("[AdventureProtect] Sent staged CloseScreen (tick {}) to {} (syncId={})", secondCloseTick, player.getName().getString(), syncId);
+                    }
+
+                    if (tick[0] == thirdCloseTick) {
+                        int syncId = player.currentScreenHandler != null ? player.currentScreenHandler.syncId : 0;
+                        player.networkHandler.sendPacket(new CloseScreenS2CPacket(syncId));
+                        LOGGER.info("[AdventureProtect] Sent staged CloseScreen (tick {}) to {} (syncId={})", thirdCloseTick, player.getName().getString(), syncId);
+                    }
+
+                    if (tick[0] >= restoreTicks) {
+                        // Restore the real block state and send final CloseScreen
+                        player.networkHandler.sendPacket(new BlockUpdateS2CPacket(pos, originalState));
+                        int syncId = player.currentScreenHandler != null ? player.currentScreenHandler.syncId : 0;
+                        player.networkHandler.sendPacket(new CloseScreenS2CPacket(syncId));
+                        LOGGER.info("[AdventureProtect] Restored real block and sent final CloseScreen to {} at {} (syncId={})",
+                                player.getName().getString(), pos, syncId);
+                        // done, don't re-enqueue
+                        return;
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("[AdventureProtect] Exception during staged spoof/restore for {} at {}: {}", player.getName().getString(), pos, e.getMessage());
+                    // continue scheduling to attempt restoration
+                }
+
+                // re-schedule for next tick
+                world.getServer().execute(this);
             }
         };
 
-        // Start the restoration timer
-        world.getServer().execute(restorationTask);
+        // start on next tick
+        world.getServer().execute(task);
     }
 
     private static boolean isXercaMusicInteractiveBlock(String blockIdString) {

@@ -21,7 +21,7 @@ public class Adventureprotect implements ModInitializer {
         StickInteractionHandler.register();
 
         // Register block spoofing handler for XercaMusic client-side GUI prevention
-        BlockSpoofingHandler.register();
+        // BlockSpoofingHandler.register();
 
         // Register commands
         CommandRegistrationCallback.EVENT.register(AdventureProtectCommands::register);
